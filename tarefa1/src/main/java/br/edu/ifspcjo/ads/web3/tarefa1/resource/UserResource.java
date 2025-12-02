@@ -1,71 +1,71 @@
 package br.edu.ifspcjo.ads.web3.tarefa1.resource;
 
-
-
-
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.ifspcjo.ads.web3.tarefa1.domain.model.User;
 import br.edu.ifspcjo.ads.web3.tarefa1.repository.UserRepository;
-import jakarta.servlet.http.HttpServletResponse;
+import br.edu.ifspcjo.ads.web3.tarefa1.service.UserService;
 
 @RestController
 @RequestMapping("/users")
-
-
 public class UserResource {
-	
-	@Autowired
-	private UserRepository userRepository;
-	
-	@GetMapping
-	public List<User> list(){
-		return userRepository.findAll();
-	}
-	
-	// testar Postman
-	// http://localhost:8080/users
 
-	@PostMapping
-	public User create(@RequestBody User user, HttpServletResponse response) {
-		return userRepository.save(user);
-	}
-	
-	// testar Postman
-	// POST - http://localhost:8080/users
-	// Body - raw - JSON
-	/*
-		{
-    			"name": "Adriana Silva",
-    			"email": "adrianasilva@ifsp.edu.br",
-    			"password": "$2a$10$Ot4XGuyPP7r82nN3WXA0bOL1Qk9gShKDlVuPoyp89HoFnHcwO4Tji",
-    			"birthDate": "03/10/2000",
-    			"gender": "FEMININO",
-    			"active": true
-		}
-	*/
+    @Autowired
+    private UserRepository userRepository;
 
-	@GetMapping("/{id}")
-	public ResponseEntity<User> findById(@PathVariable Long id){
-		Optional<User> user = userRepository.findById(id);
-		if(user.isPresent()) {
-			return ResponseEntity.ok(user.get());
-		}
-		return ResponseEntity.notFound().build();
-	}
+    @Autowired
+    private UserService userService;
 
-	// testar Postman
-	// GET - http://localhost:8080/users/1
-	// GET - http://localhost:8080/users/10
+    @GetMapping
+    public List<User> list() {
+        return userRepository.findAll();
+    }
 
+    @PostMapping
+    public User create(@RequestBody User user) {
+        return userRepository.save(user);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<User> findById(@PathVariable Long id) {
+        Optional<User> user = userRepository.findById(id);
+        return user.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void remove(@PathVariable Long id) {
+        userRepository.deleteById(id);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user) {
+        User updated = userService.update(id, user);
+        return ResponseEntity.ok(updated);
+    }
+
+   
+    @PutMapping("/{id}/active")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void atualizarPropriedadeAtivo(
+            @PathVariable Long id,
+            @RequestBody Boolean active) {
+
+        userService.updateActiveProperty(id, active);
+    }
 }

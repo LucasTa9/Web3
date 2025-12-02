@@ -1,3 +1,4 @@
+
 CREATE TABLE permission (
 	id BIGINT(20) PRIMARY KEY,
 	description VARCHAR(50) NOT NULL
@@ -12,8 +13,8 @@ CREATE TABLE user_permission (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- admin
-INSERT INTO user (id, name, email, password, endereco, data, cpf, active) 
-values (3, 'Fernando Duarte', 'fernandoduarte@ifsp.edu.br', '$2a$10$Ot4XGuyPP7r82nN3WXA0bOL1Qk9gShKDlVuPoyp89HoFnHcwO4Tji', 'Rua teste', '1975-11-16','12345678900', 1);
+INSERT INTO user (id, name, email, password, rua, numero, bairro, cidade, estado, cep, data, cpf, active) 
+values (3, 'Administrador', 'admin@ifsp.edu.br', '$2a$10$Ot4XGuyPP7r82nN3WXA0bOL1Qk9gShKDlVuPoyp89HoFnHcwO4Tji', 'Rua teste', '123', 'Centro', 'Campos do Jordão', 'SP','12345-123','1975-11-16','12345678900', 1);
 -- user
 INSERT INTO permission (id, description) values (1, 'ROLE_REGISTER_USER');
 INSERT INTO permission (id, description) values (2, 'ROLE_REMOVE_USER');
